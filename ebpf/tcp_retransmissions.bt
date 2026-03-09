@@ -1,0 +1,12 @@
+#!/usr/bin/env bpftrace
+
+kprobe:tcp_retransmit_skb
+{
+    @retransmits = count();
+}
+
+interval:s:1
+{
+    print(@retransmits);
+    clear(@retransmits);
+}

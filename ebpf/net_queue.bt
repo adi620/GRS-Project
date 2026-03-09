@@ -1,0 +1,12 @@
+#!/usr/bin/env bpftrace
+
+tracepoint:net:net_dev_queue
+{
+    @queue_events = count();
+}
+
+interval:s:1
+{
+    print(@queue_events);
+    clear(@queue_events);
+}

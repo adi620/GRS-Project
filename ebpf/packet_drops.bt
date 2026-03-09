@@ -1,0 +1,12 @@
+#!/usr/bin/env bpftrace
+
+tracepoint:skb:kfree_skb
+{
+    @drops = count();
+}
+
+interval:s:1
+{
+    print(@drops);
+    clear(@drops);
+}

@@ -1,0 +1,12 @@
+#!/usr/bin/env bpftrace
+
+kprobe:tcp_rcv_established
+{
+    @tcp_packets = count();
+}
+
+interval:s:1
+{
+    print(@tcp_packets);
+    clear(@tcp_packets);
+}
