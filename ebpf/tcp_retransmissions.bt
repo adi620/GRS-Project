@@ -1,12 +1,30 @@
 #!/usr/bin/env bpftrace
+// tcp_retransmissions.bt
+// Traces TCP retransmission events at the kernel level.
+// Fires on kprobe:tcp_retransmit_skb — called every time the kernel
+// decides a TCP segment was lost and must be resent.
+// Uses numeric value 2 for AF_INET (compatible with all bpftrace versions).
+
+BEGIN
+{
+    printf("%-20s %-16s %-8s %-16s %s\n",
+           "TIME_NS", "SADDR", "SPORT", "DADDR", "EVENT");
+    printf("Tracing TCP retransmissions... Ctrl-C to stop.\n");
+}
 
 kprobe:tcp_retransmit_skb
 {
-    @retransmits = count();
+    $sk = (struct sock *)arg0;
+    if ($sk->__sk_common.skc_family == 2) {
+        printf("%-20lu %-16s %-8d %-16s RETRANSMIT\n",
+            nsecs,
+            ntop(2, $sk->__sk_common.skc_rcv_saddr),
+            (uint32)$sk->__sk_common.skc_num,
+            ntop(2, $sk->__sk_common.skc_daddr));
+    }
 }
 
-interval:s:1
+END
 {
-    print(@retransmits);
-    clear(@retransmits);
+    printf("\n[eBPF] tcp_retransmissions tracer stopped.\n");
 }
