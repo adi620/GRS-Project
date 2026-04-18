@@ -1,0 +1,372 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+data:
+  grs-dashboard.json: |
+    {
+      "__inputs": [],
+      "__requires": [],
+      "annotations": { "list": [] },
+      "description": "GRS — Kubernetes eBPF Fault Injection Observability",
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+          "id": 100,
+          "title": "HTTP Latency — Fault Injection Results",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "lineWidth": 2, "fillOpacity": 8 },
+              "unit": "ms",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 50 },
+                  { "color": "red", "value": 200 }
+                ]
+              }
+            }
+          },
+          "gridPos": { "h": 8, "w": 16, "x": 0, "y": 1 },
+          "id": 1,
+          "options": {
+            "legend": { "calcs": ["mean","max","lastNotNull"], "displayMode": "table", "placement": "bottom" },
+            "tooltip": { "mode": "multi" }
+          },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus" },
+              "expr": "grs_latency_milliseconds{experiment=\"baseline\"}",
+              "legendFormat": "Baseline",
+              "refId": "A"
+            },
+            {
+              "expr": "grs_latency_milliseconds{experiment=\"delay\"}",
+              "legendFormat": "200ms Delay",
+              "refId": "B"
+            },
+            {
+              "expr": "grs_latency_milliseconds{experiment=\"loss\"}",
+              "legendFormat": "20% Loss",
+              "refId": "C"
+            },
+            {
+              "expr": "grs_latency_milliseconds{experiment=\"bandwidth\"}",
+              "legendFormat": "1mbit BW",
+              "refId": "D"
+            },
+            {
+              "expr": "grs_latency_milliseconds{experiment=\"reordering\"}",
+              "legendFormat": "Reorder 25%",
+              "refId": "E"
+            },
+            {
+              "expr": "grs_latency_milliseconds{experiment=\"cpu_stress\"}",
+              "legendFormat": "CPU Stress",
+              "refId": "F"
+            },
+            {
+              "expr": "grs_latency_milliseconds{experiment=\"chaos_combined\"}",
+              "legendFormat": "Chaos",
+              "refId": "G"
+            }
+          ],
+          "title": "HTTP Latency per Experiment (ms)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "ms", "color": { "mode": "thresholds" },
+              "thresholds": { "mode": "absolute", "steps": [
+                {"color":"green","value":null},{"color":"yellow","value":10},{"color":"red","value":100}
+              ]}
+            }
+          },
+          "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+          "id": 2,
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "textMode": "auto", "colorMode": "background" },
+          "targets": [{ "expr": "grs_latency_mean_milliseconds{experiment=\"baseline\"}", "legendFormat": "Baseline Mean", "refId": "A" }],
+          "title": "Baseline Mean",
+          "type": "stat"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "ms", "color": { "mode": "thresholds" },
+              "thresholds": { "mode": "absolute", "steps": [
+                {"color":"green","value":null},{"color":"yellow","value":500},{"color":"red","value":1000}
+              ]}
+            }
+          },
+          "gridPos": { "h": 4, "w": 4, "x": 16, "y": 5 },
+          "id": 3,
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+          "targets": [{ "expr": "grs_latency_mean_milliseconds{experiment=\"chaos_combined\"}", "legendFormat": "Chaos Mean", "refId": "A" }],
+          "title": "Chaos Mean Latency",
+          "type": "stat"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "ms" },
+            "overrides": []
+          },
+          "gridPos": { "h": 6, "w": 12, "x": 0, "y": 9 },
+          "id": 4,
+          "options": { "reduceOptions": { "calcs": ["mean"] }, "orientation": "horizontal", "displayMode": "gradient" },
+          "targets": [
+            { "expr": "grs_latency_mean_milliseconds", "legendFormat": "{{experiment}}", "refId": "A" }
+          ],
+          "title": "Mean Latency by Experiment",
+          "type": "bargauge"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "short", "color": {"mode":"palette-classic"} } },
+          "gridPos": { "h": 6, "w": 12, "x": 12, "y": 9 },
+          "id": 5,
+          "options": { "legend": {"displayMode":"table","placement":"bottom"}, "tooltip":{"mode":"multi"} },
+          "targets": [
+            { "expr": "grs_latency_p95_milliseconds", "legendFormat": "p95 {{experiment}}", "refId": "A" },
+            { "expr": "grs_latency_max_milliseconds", "legendFormat": "max {{experiment}}", "refId": "B" }
+          ],
+          "title": "Latency p95 and Max per Experiment",
+          "type": "timeseries"
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+          "id": 101,
+          "title": "eBPF Kernel Events",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "short", "color": {"mode":"palette-classic"}, "custom":{"lineWidth":2} }
+          },
+          "gridPos": { "h": 7, "w": 12, "x": 0, "y": 16 },
+          "id": 6,
+          "options": { "legend": {"displayMode":"table","calcs":["sum"],"placement":"bottom"} },
+          "targets": [
+            { "expr": "increase(grs_tcp_retransmissions_total[1m])", "legendFormat": "Retransmissions/min", "refId": "A" },
+            { "expr": "grs_tcp_retransmissions_total", "legendFormat": "Total retransmissions", "refId": "B" }
+          ],
+          "title": "TCP Retransmissions (eBPF kprobe:tcp_retransmit_skb)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "short", "color": {"mode":"palette-classic"}, "custom":{"lineWidth":2} }
+          },
+          "gridPos": { "h": 7, "w": 12, "x": 12, "y": 16 },
+          "id": 7,
+          "options": { "legend": {"displayMode":"table","calcs":["sum"],"placement":"bottom"} },
+          "targets": [
+            { "expr": "increase(grs_packet_drops_total[1m])", "legendFormat": "Drops/min (reason={{reason}})", "refId": "A" },
+            { "expr": "grs_packet_drops_total", "legendFormat": "Total drops", "refId": "B" }
+          ],
+          "title": "Packet Drops by Reason (eBPF tracepoint:skb:kfree_skb)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "short", "color": {"mode":"thresholds"},
+            "thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":1}]}
+          }},
+          "gridPos": { "h": 3, "w": 6, "x": 0, "y": 23 },
+          "id": 8,
+          "options": { "reduceOptions":{"calcs":["lastNotNull"]}, "colorMode":"background" },
+          "targets": [{ "expr": "grs_tcp_retransmissions_total", "legendFormat": "Total Retransmits", "refId": "A" }],
+          "title": "Total TCP Retransmissions",
+          "type": "stat"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "short", "color": {"mode":"thresholds"},
+            "thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"yellow","value":100},{"color":"red","value":1000}]}
+          }},
+          "gridPos": { "h": 3, "w": 6, "x": 6, "y": 23 },
+          "id": 9,
+          "options": { "reduceOptions":{"calcs":["lastNotNull"]}, "colorMode":"background" },
+          "targets": [{ "expr": "grs_packet_drops_total", "legendFormat": "Total Drops", "refId": "A" }],
+          "title": "Total Packet Drops",
+          "type": "stat"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "short" } },
+          "gridPos": { "h": 3, "w": 6, "x": 12, "y": 23 },
+          "id": 10,
+          "options": { "reduceOptions":{"calcs":["lastNotNull"]}, "colorMode":"value" },
+          "targets": [{ "expr": "grs_current_experiment", "legendFormat": "Experiment ID", "refId": "A" }],
+          "title": "Current Experiment",
+          "type": "stat"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "short", "color": {"mode":"thresholds"},
+            "thresholds":{"mode":"absolute","steps":[{"color":"green","value":null},{"color":"red","value":1}]}
+          }},
+          "gridPos": { "h": 3, "w": 6, "x": 18, "y": 23 },
+          "id": 11,
+          "options": { "reduceOptions":{"calcs":["lastNotNull"]}, "colorMode":"background" },
+          "targets": [{ "expr": "grs_sched_events_total", "legendFormat": "Sched Events", "refId": "A" }],
+          "title": "Scheduler Events (sched_latency)",
+          "type": "stat"
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 },
+          "id": 102,
+          "title": "Pod CPU & Memory (kubectl top)",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "short", "custom":{"lineWidth":2}, "color":{"mode":"palette-classic"} }
+          },
+          "gridPos": { "h": 7, "w": 12, "x": 0, "y": 27 },
+          "id": 12,
+          "options": { "legend":{"displayMode":"table","calcs":["mean","max"],"placement":"bottom"} },
+          "targets": [
+            {
+              "expr": "container_cpu_usage_seconds_total{namespace=\"default\",container!=\"\",container!=\"POD\"}",
+              "legendFormat": "{{pod}} - {{container}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Container CPU Usage (cAdvisor)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "bytes", "custom":{"lineWidth":2}, "color":{"mode":"palette-classic"} }
+          },
+          "gridPos": { "h": 7, "w": 12, "x": 12, "y": 27 },
+          "id": 13,
+          "options": { "legend":{"displayMode":"table","calcs":["mean","max"],"placement":"bottom"} },
+          "targets": [
+            {
+              "expr": "container_memory_working_set_bytes{namespace=\"default\",container!=\"\",container!=\"POD\"}",
+              "legendFormat": "{{pod}} - {{container}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Container Memory Usage (cAdvisor)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "short", "color":{"mode":"palette-classic"}, "custom":{"lineWidth":2} }
+          },
+          "gridPos": { "h": 7, "w": 12, "x": 0, "y": 34 },
+          "id": 14,
+          "options": { "legend":{"displayMode":"table","placement":"bottom"} },
+          "targets": [
+            { "expr": "grs_pod_cpu_millicores", "legendFormat": "{{pod}} CPU (m)", "refId": "A" }
+          ],
+          "title": "Pod CPU — from kubectl top (millicores)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "short", "color":{"mode":"palette-classic"}, "custom":{"lineWidth":2} }
+          },
+          "gridPos": { "h": 7, "w": 12, "x": 12, "y": 34 },
+          "id": 15,
+          "options": { "legend":{"displayMode":"table","placement":"bottom"} },
+          "targets": [
+            { "expr": "grs_pod_memory_mi", "legendFormat": "{{pod}} Memory (Mi)", "refId": "A" }
+          ],
+          "title": "Pod Memory — from kubectl top (Mi)",
+          "type": "timeseries"
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 41 },
+          "id": 103,
+          "title": "Correlation — Latency vs CPU vs Retransmissions",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "custom":{"lineWidth":2} },
+            "overrides": [
+              { "matcher":{"id":"byName","options":"Latency (ms)"}, "properties": [{"id":"unit","value":"ms"},{"id":"color","value":{"fixedColor":"red","mode":"fixed"}}] },
+              { "matcher":{"id":"byName","options":"CPU (millicores)"}, "properties": [{"id":"unit","value":"short"},{"id":"color","value":{"fixedColor":"orange","mode":"fixed"}}] },
+              { "matcher":{"id":"byName","options":"Retransmissions"}, "properties": [{"id":"unit","value":"short"},{"id":"color","value":{"fixedColor":"purple","mode":"fixed"}}] }
+            ]
+          },
+          "gridPos": { "h": 9, "w": 24, "x": 0, "y": 42 },
+          "id": 16,
+          "options": { "legend":{"displayMode":"table","calcs":["mean","max"],"placement":"bottom"}, "tooltip":{"mode":"multi"} },
+          "targets": [
+            { "expr": "grs_latency_milliseconds{experiment=~\"loss|cpu_stress|chaos_combined\"}", "legendFormat": "Latency (ms) — {{experiment}}", "refId": "A" },
+            { "expr": "grs_pod_cpu_millicores{pod=~\"web.*\"}", "legendFormat": "CPU (millicores) — {{pod}}", "refId": "B" },
+            { "expr": "increase(grs_tcp_retransmissions_total[30s]) * 2", "legendFormat": "Retransmissions (scaled)", "refId": "C" }
+          ],
+          "title": "Correlation: Latency vs Pod CPU vs TCP Retransmissions",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "short", "custom":{"lineWidth":2}, "color":{"mode":"palette-classic"} }
+          },
+          "gridPos": { "h": 7, "w": 12, "x": 0, "y": 51 },
+          "id": 17,
+          "options": { "legend":{"displayMode":"table","placement":"bottom"} },
+          "targets": [
+            { "expr": "grs_bandwidth_speed_bytes_per_sec", "legendFormat": "Download speed (B/s)", "refId": "A" },
+            { "expr": "125000", "legendFormat": "1mbit cap (125 KB/s)", "refId": "B" }
+          ],
+          "title": "Bandwidth Experiment — Measured Throughput vs Cap",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "ns", "custom":{"lineWidth":1}, "color":{"mode":"palette-classic"} }
+          },
+          "gridPos": { "h": 7, "w": 12, "x": 12, "y": 51 },
+          "id": 18,
+          "options": { "legend":{"displayMode":"table","calcs":["mean"],"placement":"bottom"} },
+          "targets": [
+            { "expr": "grs_sched_runtime_ns", "legendFormat": "{{comm}} (PID {{pid}})", "refId": "A" }
+          ],
+          "title": "Scheduler Runtime per Process (sched_stat_runtime)",
+          "type": "timeseries"
+        }
+      ],
+      "refresh": "10s",
+      "schemaVersion": 38,
+      "tags": ["grs", "kubernetes", "ebpf", "fault-injection"],
+      "templating": { "list": [] },
+      "time": { "from": "now-30m", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "GRS — eBPF Fault Injection Dashboard",
+      "uid": "grs-ebpf-v3",
+      "version": 1
+    }
