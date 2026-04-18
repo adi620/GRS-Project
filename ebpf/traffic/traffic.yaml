@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: traffic
+  labels:
+    app: traffic
+spec:
+  restartPolicy: Always
+  containers:
+  - name: traffic
+    image: curlimages/curl:latest
+    command: ["/bin/sh"]
+    args:
+      - "-c"
+      - "while true; do curl -s -o /dev/null --max-time 10 http://web/; sleep 1; done"
