@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GRS — Regression Diff Report</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#c9d1d9;padding:24px}
+.page{max-width:960px;margin:0 auto}
+.header{background:linear-gradient(135deg,#161b22,#1c2333);border:1px solid #30363d;border-radius:12px;padding:28px 36px;margin-bottom:24px}
+h1{color:#e6edf3;font-size:22px;margin-bottom:6px}
+.sub{color:#8b949e;font-size:12px}
+.section{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:22px 26px;margin-bottom:18px}
+.stitle{color:#e6edf3;font-size:14px;font-weight:600;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #21262d}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#21262d;color:#8b949e;font-size:11px;text-transform:uppercase;letter-spacing:.4px;padding:8px 12px;text-align:left}
+td{padding:8px 12px;border-bottom:1px solid #21262d;color:#c9d1d9}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#1c2333}
+.legend{display:flex;gap:20px;font-size:11px;margin-top:12px}
+.leg{display:flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.footer{text-align:center;color:#484f58;font-size:11px;margin-top:24px;padding-top:14px;border-top:1px solid #21262d}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="header">
+  <h1>GRS — Regression Diff Report</h1>
+  <div class="sub">Current run vs reference &nbsp;|&nbsp; Generated: 08 April 2026, 01:21:26</div>
+  <div class="sub" style="margin-top:6px">Reference saved: 08 April 2026, 01:21:26 &nbsp;|&nbsp; Thresholds: mean &gt;10% = regression &nbsp;|&nbsp; Retransmissions delta &gt;5</div>
+</div>
+
+<div class="section">
+  <div class="stitle">Latency Comparison — Current vs Reference</div>
+  <table>
+    <thead><tr>
+      <th>Experiment</th>
+      <th>Current Mean</th>
+      <th>Ref Mean</th>
+      <th>Mean Δ</th>
+      <th>Current Max</th>
+      <th>Ref Max</th>
+      <th>Samples</th>
+    </tr></thead>
+    <tbody>
+<tr>
+  <td style="color:#e6edf3;font-weight:500">baseline</td>
+  <td style="font-family:monospace">1.8ms</td>
+  <td style="font-family:monospace;color:#8b949e">1.8ms</td>
+  <td style=";font-family:monospace">→ +0.0%</td>
+  <td style="font-family:monospace">3.8ms</td>
+  <td style="font-family:monospace;color:#8b949e">3.8ms</td>
+  <td style="font-family:monospace">48</td>
+</tr><tr>
+  <td style="color:#e6edf3;font-weight:500">delay</td>
+  <td style="font-family:monospace">402.7ms</td>
+  <td style="font-family:monospace;color:#8b949e">402.7ms</td>
+  <td style=";font-family:monospace">→ +0.0%</td>
+  <td style="font-family:monospace">405.2ms</td>
+  <td style="font-family:monospace;color:#8b949e">405.2ms</td>
+  <td style="font-family:monospace">37</td>
+</tr><tr>
+  <td style="color:#e6edf3;font-weight:500">loss</td>
+  <td style="font-family:monospace">243.0ms</td>
+  <td style="font-family:monospace;color:#8b949e">243.0ms</td>
+  <td style=";font-family:monospace">→ +0.0%</td>
+  <td style="font-family:monospace">2058.4ms</td>
+  <td style="font-family:monospace;color:#8b949e">2058.4ms</td>
+  <td style="font-family:monospace">40</td>
+</tr><tr>
+  <td style="color:#e6edf3;font-weight:500">bandwidth</td>
+  <td style="font-family:monospace">2.1ms</td>
+  <td style="font-family:monospace;color:#8b949e">2.1ms</td>
+  <td style=";font-family:monospace">→ +0.0%</td>
+  <td style="font-family:monospace">4.4ms</td>
+  <td style="font-family:monospace;color:#8b949e">4.4ms</td>
+  <td style="font-family:monospace">47</td>
+</tr><tr>
+  <td style="color:#e6edf3;font-weight:500">reordering</td>
+  <td style="font-family:monospace">187.7ms</td>
+  <td style="font-family:monospace;color:#8b949e">187.7ms</td>
+  <td style=";font-family:monospace">→ +0.0%</td>
+  <td style="font-family:monospace">203.5ms</td>
+  <td style="font-family:monospace;color:#8b949e">203.5ms</td>
+  <td style="font-family:monospace">41</td>
+</tr><tr>
+  <td style="color:#e6edf3;font-weight:500">cpu_stress</td>
+  <td style="font-family:monospace">966.8ms</td>
+  <td style="font-family:monospace;color:#8b949e">966.8ms</td>
+  <td style=";font-family:monospace">→ +0.0%</td>
+  <td style="font-family:monospace">1997.5ms</td>
+  <td style="font-family:monospace;color:#8b949e">1997.5ms</td>
+  <td style="font-family:monospace">7</td>
+</tr><tr>
+  <td style="color:#e6edf3;font-weight:500">chaos_combined</td>
+  <td style="font-family:monospace">2643.4ms</td>
+  <td style="font-family:monospace;color:#8b949e">0.0ms</td>
+  <td style=";font-family:monospace">→ —</td>
+  <td style="font-family:monospace">3810.1ms</td>
+  <td style="font-family:monospace;color:#8b949e">0.0ms</td>
+  <td style="font-family:monospace">5</td>
+</tr>
+    </tbody>
+  </table>
+  <div class="legend">
+    <div class="leg"><div class="dot" style="background:#3fb950"></div><span style="color:#3fb950">▼ Improvement (faster than reference)</span></div>
+    <div class="leg"><div class="dot" style="background:#f85149"></div><span style="color:#f85149">▲ Regression (slower than reference)</span></div>
+    <div class="leg"><div class="dot" style="background:#8b949e"></div><span style="color:#8b949e">→ Within threshold (±10%)</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="stitle">eBPF Event Comparison</div>
+  <table>
+    <thead><tr><th>Metric</th><th>Current</th><th>Reference</th><th>Delta</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr>
+        <td style="color:#e6edf3">TCP Retransmissions</td>
+        <td style="font-family:monospace">55</td>
+        <td style="font-family:monospace;color:#8b949e">55</td>
+        <td style="font-family:monospace;color:#e6edf3">0</td>
+        <td style="color:#e6edf3">within normal range</td>
+      </tr>
+      <tr>
+        <td style="color:#e6edf3">Packet Drops (kfree_skb)</td>
+        <td style="font-family:monospace">9579</td>
+        <td style="font-family:monospace;color:#8b949e">9579</td>
+        <td style="font-family:monospace">—</td>
+        <td style="color:#8b949e">reference value reflects same run</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <div class="stitle">How to Use This Report</div>
+  <p style="font-size:12px;color:#8b949e;line-height:1.8">
+    <strong style="color:#e6edf3">Save a new reference:</strong>
+    <code style="background:#21262d;padding:2px 6px;border-radius:4px;color:#58a6ff">bash generate_diff_report.sh --save-as-reference</code><br>
+    <strong style="color:#e6edf3">Compare against reference:</strong>
+    <code style="background:#21262d;padding:2px 6px;border-radius:4px;color:#58a6ff">bash generate_diff_report.sh</code><br><br>
+    The reference is stored in <code style="color:#58a6ff">results/baseline_reference.json</code>.
+    Re-run the full pipeline then call this script to detect regressions.
+    A <span style="color:#f85149">▲ regression</span> means this run is slower than the stored reference by more than the threshold.
+  </p>
+</div>
+
+<div class="footer">GRS Diff Report &nbsp;|&nbsp; 08 April 2026, 01:21:26</div>
+</div>
+</body>
+</html>
