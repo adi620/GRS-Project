@@ -1,0 +1,34 @@
+#!/usr/bin/env bpftrace
+// sched_latency.bt
+// Traces per-process scheduling runtime via tracepoint:sched:sched_stat_runtime.
+// ALL processes are captured (no filter) so stress-ng, nginx, curl, kubectl
+// all appear in the output — giving a complete picture of CPU contention.
+//
+// Columns: TIME_NS  COMM  PID  RUNTIME_NS
+//
+// Under CPU stress: stress-ng workers appear with high event counts,
+// and nginx/curl quanta become shorter and less frequent.
+//
+// Usage: sudo bpftrace ebpf/sched_latency.bt > results/sched_latency.log
+
+BEGIN
+{
+    printf("%-20s %-20s %-12s %s\n", "TIME_NS", "COMM", "PID", "RUNTIME_NS");
+    printf("Tracing ALL scheduler runtime events ... Ctrl-C to stop.\n");
+}
+
+tracepoint:sched:sched_stat_runtime
+{
+    // Capture every process — no filter
+    // This lets us see stress-ng workers competing with nginx and curl
+    printf("%-20lu %-20s %-12d %lu\n",
+        nsecs,
+        comm,
+        pid,
+        args->runtime);
+}
+
+END
+{
+    printf("\n[eBPF] sched_latency tracer stopped.\n");
+}
